@@ -49,9 +49,9 @@ int parse_params(int argc, char* argv[])
                 string lang_string = argv[i + 1];
 
                 std::map<string, int> lang_map;
-                lang_map["c"] = 0;
-                lang_map["cpp"] = 1;
-                lang_map["sh"] = 2;
+                lang_map["c"] = lang_c;
+                lang_map["cpp"] = lang_c;
+                lang_map["sh"] = lang_c;
 
                 std::map<string, int>::iterator i = lang_map.begin();
 
@@ -65,7 +65,7 @@ int parse_params(int argc, char* argv[])
                     i++;
                 }
 
-                if (global_lang == -1)
+                if (global_lang == lang_inval)
                 {
                     cout << "Error: filetype does not exist!" << endl;
                     return 1;
@@ -136,7 +136,7 @@ int parse_params(int argc, char* argv[])
 
     if (global_lang == lang_inval)
     {
-        cout << "No type has been specified, attempting to auto-detect the type...\n";
+        cout << "No type has been specified, attempting to auto-detect the type of \"" << global_file_name << "\"...\nExtension: \"" << file_extension << "\"\n";
 
         std::map<string, int> lang_map;
         lang_map["c"]   = lang_c;
@@ -198,7 +198,7 @@ int main(int argc, char* argv[])
     std::ofstream OutFile(global_out_file);
     OutFile << global_file_content;
     OutFile.close();
-    cout << "Successfully wrote to " << global_out_file << "!" << endl;
+    cout << "Successfully wrote to \"" << global_out_file << "\"!" << endl;
 
 
     return 0;

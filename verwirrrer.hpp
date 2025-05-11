@@ -13,7 +13,7 @@ int Verwirrrer(int lang, std::string& file_content)
     switch (lang)
     {
         case 0:
-            file_content = nocom_c(file_content);
+            file_content = verwirrrer_komplett_c(file_content);
             //file_content = kompilierungstest_c(file_content);
             if (file_content == "")
             {
@@ -21,7 +21,7 @@ int Verwirrrer(int lang, std::string& file_content)
             }
             break;
         case 1:
-            file_content = nocom_cpp(file_content);
+            file_content = verwirrrer_komplett_cpp(file_content);
             //file_content = kompilierungstest_cpp(file_content);
             if (file_content == "")
             {
@@ -32,7 +32,7 @@ int Verwirrrer(int lang, std::string& file_content)
             file_content = nocom_sh(file_content);
             break;*/
         default:
-            cout << "Error: language does not exist!" << endl;
+            std::cerr << "Error: language does not exist!" << std::endl;
             return 1;
     }
 

@@ -17,9 +17,9 @@ std::string lade_datei(const std::string& dateiname)
     return ss.str();
 }
 
-bool ist_gueltiges_include(const std::string& zeile, std::string& dateiname_out)
+bool ist_gueltiges_include(const std::string& zeile, std::string& dateiname_out, bool& im_block_comment)
 {
-    enum Zustand { NORMAL, STRING, CHAR, LINE_COMMENT, BLOCK_COMMENT };
+    enum Zustand { NORMAL, STRING, CHAR, LINE_COMMENT };
     Zustand zustand = NORMAL;
 
     for (size_t i = 0; i < zeile.length(); ++i)
@@ -27,14 +27,24 @@ bool ist_gueltiges_include(const std::string& zeile, std::string& dateiname_out)
         char c = zeile[i];
         char next = (i + 1 < zeile.length()) ? zeile[i + 1] : '\0';
 
-        switch (zustand) {
+        if (im_block_comment)
+        {
+            if (c == '*' && next == '/')
+            {
+                im_block_comment = false;
+                ++i;
+            }
+            continue;
+        }
+
+        switch (zustand)
+        {
             case NORMAL:
                 if (c == '/' && next == '/')
                 {
-                    zustand = LINE_COMMENT;
-                    ++i;
+                    return false;
                 } else if (c == '/' && next == '*') {
-                    zustand = BLOCK_COMMENT;
+                    im_block_comment = true;
                     ++i;
                 } else if (c == '"') {
                     zustand = STRING;
@@ -44,52 +54,53 @@ bool ist_gueltiges_include(const std::string& zeile, std::string& dateiname_out)
                     std::smatch match;
                     std::string rest = zeile.substr(i);
                     std::regex include_regex("^#\\s*include\\s*\"([^\"]+)\"");
-                    if (std::regex_search(rest, match, include_regex))
-                    {
+                    if (std::regex_search(rest, match, include_regex)) {
                         dateiname_out = match[1];
                         return true;
                     }
                 }
                 break;
+
             case STRING:
                 if (c == '\\') ++i;
                 else if (c == '"') zustand = NORMAL;
                 break;
+
             case CHAR:
                 if (c == '\\') ++i;
                 else if (c == '\'') zustand = NORMAL;
                 break;
+
             case LINE_COMMENT:
                 return false;
-            case BLOCK_COMMENT:
-                if (c == '*' && next == '/') {
-                    zustand = NORMAL;
-                    ++i;
-                }
-                break;
         }
     }
 
     return false;
 }
 
-std::string ppc(const std::string& dateiinhalt, const std::string& aktueller_dateiname = "") {
+std::string ppc(const std::string& dateiinhalt, const std::string& aktueller_dateiname = "")
+{
     std::istringstream iss(dateiinhalt);
     std::ostringstream result;
     std::string zeile;
 
     bool hat_pragma_once = false;
+    bool im_block_comment = false;
 
     std::regex pragma_once_regex("^\\s*#\\s*pragma\\s+once\\s*");
     std::regex system_include_regex("^\\s*#\\s*include\\s*<[^>]+>\\s*");
 
-    while (std::getline(iss, zeile)) {
+    while (std::getline(iss, zeile))
+    {
         std::string includepfad;
 
         // Prüfe auf pragma once
-        if (std::regex_match(zeile, pragma_once_regex)) {
+        if (std::regex_match(zeile, pragma_once_regex))
+        {
             hat_pragma_once = true;
-            if (pragma_once_dateien.count(aktueller_dateiname)) {
+            if (pragma_once_dateien.count(aktueller_dateiname))
+            {
                 return "";
             }
             pragma_once_dateien.insert(aktueller_dateiname);
@@ -97,9 +108,11 @@ std::string ppc(const std::string& dateiinhalt, const std::string& aktueller_dat
         }
 
         // Prüfe auf gültiges #include "..."
-        if (ist_gueltiges_include(zeile, includepfad)) {
+        if (ist_gueltiges_include(zeile, includepfad, im_block_comment))
+        {
             std::string includetext = lade_datei(includepfad);
-            if (!includetext.empty()) {
+            if (!includetext.empty())
+            {
                 result << "// Begin Include: " << includepfad << "\n";
                 result << ppc(includetext, includepfad);
                 result << "// End Include: " << includepfad << "\n";

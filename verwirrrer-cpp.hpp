@@ -78,12 +78,11 @@ std::string nocom_c(std::string file_content)
 
 std::string verwirrrer_komplett_c(std::string file_content)
 {
-    std::string verwirrt;
-    verwirrt = ppc_c(file_content, "", true);
-    verwirrt = nocom_c(verwirrt);
+    std::string verwirrt1 = ppc_c(file_content, "", true);
+    std::string verwirrt2 = nocom_c(verwirrt1);
     // do more stuff
 
-    return verwirrt;
+    return verwirrt2;
 }
 
 // Abschnitt C++:
@@ -94,10 +93,9 @@ std::string verwirrrer_komplett_c(std::string file_content)
 
 std::string verwirrrer_komplett_cpp(std::string file_content)
 {
-    std::string verwirrt;
-    verwirrt = ppc_cpp(file_content, "", true);
-    verwirrt = nocom_cpp(verwirrt);
+    std::string verwirrt1 = ppc_cpp(file_content, "", true);
+    std::string verwirrt2 = nocom_cpp(verwirrt1);
     // do more stuff
-    
-    return verwirrt;
+
+    return verwirrt2;
 }

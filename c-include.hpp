@@ -1,3 +1,7 @@
+#pragma once
+
+// minimaler Präprozessor, der nur lokale header inkludiert
+
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -106,7 +110,7 @@ bool ist_gueltiges_include(const std::string& zeile, std::string& dateiname_out,
     return false;
 }
 
-std::string ppc(const std::string& dateiinhalt, const std::string& aktueller_dateiname = "", bool rekursiv_suchen = false)
+std::string ppc_c(const std::string& dateiinhalt, const std::string& aktueller_dateiname = "", bool rekursiv_suchen = false)
 {
     std::istringstream iss(dateiinhalt);
     std::ostringstream result;
@@ -141,7 +145,7 @@ std::string ppc(const std::string& dateiinhalt, const std::string& aktueller_dat
             if (!includetext.empty())
             {
                 result << "// Begin Include: " << includepfad << "\n";
-                result << ppc(includetext, includepfad, rekursiv_suchen);
+                result << ppc_c(includetext, includepfad, rekursiv_suchen);
                 result << "// End Include: " << includepfad << "\n";
                 continue;
             } else {
@@ -157,6 +161,7 @@ std::string ppc(const std::string& dateiinhalt, const std::string& aktueller_dat
     return result.str();
 }
 
+/* mainfunktion zum testen
 int main()
 {
     std::string quell_datei;
@@ -172,7 +177,7 @@ int main()
         return 1;
     }
 
-    std::string ergebnis = ppc(dateiinhalt, quell_datei, rekursiv_suchen);
+    std::string ergebnis = ppc_c(dateiinhalt, quell_datei, rekursiv_suchen);
 
     std::ofstream ausgabe("ausgabe.cpp");
     if (!ausgabe)
@@ -185,3 +190,4 @@ int main()
     std::cout << "Verarbeitung abgeschlossen. Ergebnis in ausgabe.cpp.\n";
     return 0;
 }
+*/

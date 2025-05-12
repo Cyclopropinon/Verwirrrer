@@ -8,6 +8,8 @@
 #include <regex>
 #include <string>
 
+#include "c-include.hpp"
+
 // nocom = no comment = removing all comments
 std::string nocom_c(std::string file_content)
 {
@@ -76,8 +78,9 @@ std::string nocom_c(std::string file_content)
 
 std::string verwirrrer_komplett_c(std::string file_content)
 {
-    std::string verwirrt = "";
-    verwirrt = nocom_c(file_content);
+    std::string verwirrt;
+    verwirrt = ppc_c(file_content, "", true);
+    verwirrt = nocom_c(verwirrt);
     // do more stuff
 
     return verwirrt;
@@ -86,12 +89,14 @@ std::string verwirrrer_komplett_c(std::string file_content)
 // Abschnitt C++:
 
 // literally the same lol
-#define nocom_cpp nocom_c
+#define ppc_cpp     ppc_c
+#define nocom_cpp   nocom_c
 
 std::string verwirrrer_komplett_cpp(std::string file_content)
 {
-    std::string verwirrt = "";
-    verwirrt = nocom_cpp(file_content);
+    std::string verwirrt;
+    verwirrt = ppc_cpp(file_content, "", true);
+    verwirrt = nocom_cpp(verwirrt);
     // do more stuff
     
     return verwirrt;

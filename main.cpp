@@ -11,6 +11,7 @@
 //  1 = C++
 //  2 = Bash
 int global_lang = lang_inval;
+int global_debug = false;
 std::string global_out_file;
 std::string global_file_name;
 std::string global_file_content;
@@ -39,6 +40,10 @@ int parse_params(int argc, char* argv[])
         if (arg == "-h" || arg == "--help")
         {
             help = true;
+            was_flag = true;
+        } else if (arg == "-d" || arg == "--debug")
+        {
+            global_debug = true;
             was_flag = true;
         } else if (arg == "-l" || arg == "--language")
         {
@@ -190,8 +195,26 @@ int main(int argc, char* argv[])
     }
     file_stream.close();
 
-    if (Verwirrrer(global_lang, global_file_content) == 1)
+    if (global_debug)
     {
+        string o1, o2, o3;
+        Verwirrrer_debug(global_lang, global_file_content, o1, o2, o3);
+
+        std::ofstream of1("vd_1");
+        of1 << o1;
+        of1.close();
+        cout << "Successfully wrote to \"vd_1\"!\n";    
+
+        std::ofstream of2("vd_2");
+        of2 << o2;
+        of2.close();
+        cout << "Successfully wrote to \"vd_2\"!\n";    
+
+        std::ofstream of3("vd_3");
+        of3 << o2;
+        of3.close();
+        cout << "Successfully wrote to \"vd_3\"!\n";    
+    } else if (Verwirrrer(global_lang, global_file_content) == 1) {
         return 1;
     }
 

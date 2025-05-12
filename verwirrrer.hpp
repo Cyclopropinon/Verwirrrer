@@ -38,3 +38,33 @@ int Verwirrrer(int lang, std::string& file_content)
 
     return 0;
 }
+
+int Verwirrrer_debug(int lang, std::string& file_content0, std::string& file_content1, std::string& file_content2, std::string& file_content3)
+{
+    switch (lang)
+    {
+        case 0:
+            file_content1 = ppc_c(file_content0, "", true);
+            file_content2 = nocom_c(file_content1);
+            file_content3 = nocom_c(file_content2);
+            if (file_content3 == "")
+            {
+                return 1;
+            }
+            break;
+        case 1:
+            file_content1 = ppc_cpp(file_content0, "", true);
+            file_content2 = nocom_cpp(file_content1);
+            file_content3 = nocom_cpp(file_content2);
+            if (file_content3 == "")
+            {
+                 return 1;
+            }
+            break;
+        default:
+            std::cerr << "Error: language does not exist!" << std::endl;
+            return 1;
+    }
+
+    return 0;
+}

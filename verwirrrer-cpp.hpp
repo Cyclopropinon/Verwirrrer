@@ -19,6 +19,7 @@ std::string nocom_c(std::string file_content)
     int length = file_content.length();
     bool was_slash = false;
     bool was_asterisk = false;
+    bool was_backslash = false;
     bool multiline_comment = false;
     bool comment = false;
     bool single_quote = false;
@@ -32,7 +33,7 @@ std::string nocom_c(std::string file_content)
             if (was_asterisk)
             {
                 multiline_comment = false;
-                verwirrrt += '\n';         // add a newline so stuff doesnt get too wild
+                verwirrrt += '\n';          // add a newline so stuff doesnt get too wild; needs to be a ' ' for multiline comments only spanning a single line, in case it is part of a makro
                 continue;                   // prevents the trailing '/' from entering the result
             } else if (was_slash) 
             {
@@ -43,6 +44,7 @@ std::string nocom_c(std::string file_content)
             }
             
             was_asterisk = false;
+            was_backslash = false;
         } else if (current_char == '*' && !double_quote && !single_quote)
         {
             if (was_slash)
@@ -54,17 +56,31 @@ std::string nocom_c(std::string file_content)
             }
         
             was_slash = false;
+            was_backslash = false;
         } else if (current_char == '\n' && comment) 
         {
             comment = false;
-        } else if (current_char == '\'') 
-        {
-            single_quote = !single_quote;
+            was_slash = false;
+            was_asterisk = false;
+            was_backslash = false;
+        } else if (current_char == '\'') {
+            if(!was_backslash) single_quote = !single_quote;
+            was_slash = false;
+            was_asterisk = false;
+            was_backslash = false;
         } else if (current_char == '"') {
-            double_quote = !double_quote;
+            if(!was_backslash) double_quote = !double_quote;
+            was_slash = false;
+            was_asterisk = false;
+            was_backslash = false;
+        } else if (current_char == '\\') {
+            was_slash = false;
+            was_asterisk = false;
+            was_backslash = !was_backslash;
         } else {
             was_slash = false;
             was_asterisk = false;
+            was_backslash = false;
         }
         
         if (!comment && !multiline_comment)

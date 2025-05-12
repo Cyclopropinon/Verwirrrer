@@ -116,6 +116,7 @@ int parse_params(int argc, char* argv[])
         cout <<  "Usage: ./Verwirrrer [options] <file>"
             "\n" "Options:"
             "\n" "  -h, --help               Show this help message and exit"
+            "\n" "  -d, --debug              Enable debugging (output into files vd_*)"
             "\n" "  -l, --language <type>    Specify the language (optional)"
             "\n" "  -o, --out      <file>    Specify the output file (optional)"         
             "\n"

@@ -17,6 +17,7 @@ std::string nocom_c(std::string file_content)
 
     string verwirrrt = "";
     int length = file_content.length();
+    bool was_digit = false;
     bool was_slash = false;
     bool was_asterisk = false;
     bool was_backslash = false;
@@ -34,6 +35,11 @@ std::string nocom_c(std::string file_content)
             {
                 multiline_comment = false;
                 verwirrrt += '\n';          // add a newline so stuff doesnt get too wild; needs to be a ' ' for multiline comments only spanning a single line, in case it is part of a makro
+
+                was_digit = false;
+                was_slash = false;
+                was_asterisk = false;
+                was_backslash = false;
                 continue;                   // prevents the trailing '/' from entering the result
             } else if (was_slash) 
             {
@@ -43,6 +49,7 @@ std::string nocom_c(std::string file_content)
                 was_slash = true;
             }
             
+            was_digit = false;
             was_asterisk = false;
             was_backslash = false;
         } else if (current_char == '*' && !double_quote && !single_quote)
@@ -50,34 +57,46 @@ std::string nocom_c(std::string file_content)
             if (was_slash)
             {
                 multiline_comment = true;
-                verwirrrt.pop_back();      // removes the beginning '/' of the comment
+                verwirrrt.pop_back();       // removes the beginning '/' of the comment
             } else {
                 was_asterisk = true;
             }
         
+            was_digit = false;
             was_slash = false;
             was_backslash = false;
         } else if (current_char == '\n' && comment) 
         {
             comment = false;
+            was_digit = false;
             was_slash = false;
             was_asterisk = false;
             was_backslash = false;
-        } else if (current_char == '\'') {
+        } else if (current_char == '\'' && !comment && !multiline_comment) {
+            if(was_digit && !single_quote) continue;        // removes the single quote seperators from integer literals
             if(!was_backslash) single_quote = !single_quote;
+            was_digit = false;
             was_slash = false;
             was_asterisk = false;
             was_backslash = false;
-        } else if (current_char == '"') {
+        } else if (current_char == '\"' && !comment && !multiline_comment) {
             if(!was_backslash) double_quote = !double_quote;
+            was_digit = false;
             was_slash = false;
             was_asterisk = false;
             was_backslash = false;
         } else if (current_char == '\\') {
+            was_digit = false;
             was_slash = false;
             was_asterisk = false;
             was_backslash = !was_backslash;
+        } else if ('0' <= current_char && current_char <= '9') {
+            was_digit = true;
+            was_slash = false;
+            was_asterisk = false;
+            was_backslash = false;
         } else {
+            was_digit = false;
             was_slash = false;
             was_asterisk = false;
             was_backslash = false;
